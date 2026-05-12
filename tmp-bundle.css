@@ -1,0 +1,51 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+body {
+  @apply min-h-screen bg-midnight text-cream antialiased font-sans transition-colors duration-500;
+  margin: 0;
+}
+html.light body {
+  @apply bg-[#f3efe6] text-ink antialiased;
+}
+::selection {
+  background: rgba(201, 162, 39, 0.35);
+  color: #f7f4ed;
+}
+html.light ::selection {
+  background: rgba(201, 162, 39, 0.32);
+  color: #070b14;
+}
+.glass-panel {
+  @apply rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl;
+}
+html.light .glass-panel {
+  @apply border-navy/20 bg-white/95 text-ink shadow-[0_16px_48px_-12px_rgba(7, 11, 20, 0.12)];
+}
+.text-gradient-gold {
+  @apply bg-gradient-to-r from-gold-soft via-gold to-gold-soft bg-clip-text text-transparent;
+}
+html.light .text-gradient-gold {
+  background-image:
+    linear-gradient(
+      90deg,
+      #4a3a0f,
+      #9a7a1e,
+      #4a3a0f);
+}

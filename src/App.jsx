@@ -4,7 +4,9 @@ import { LoadingIntro } from './components/LoadingIntro'
 import { FloatingBackground } from './components/FloatingBackground'
 import { SurpriseHero } from './components/SurpriseHero'
 import { BirthdayReveal } from './components/BirthdayReveal'
+import { BrotherhoodSection } from './components/BrotherhoodSection'
 import { SpecialQualities } from './components/SpecialQualities'
+import { DevTribute } from './components/DevTribute'
 import { FunnyMoments } from './components/FunnyMoments'
 import { MemoryGallery } from './components/MemoryGallery'
 import { PrayerSection } from './components/PrayerSection'
@@ -13,8 +15,7 @@ import { ClosingSection } from './components/ClosingSection'
 import { SectionDivider } from './components/SectionDivider'
 import { EasterEgg } from './components/EasterEgg'
 import { SiteFooter } from './components/SiteFooter'
-import { ThemeToggle } from './components/ThemeToggle'
-import { ThemeNudge } from './components/ThemeNudge'
+import { ExperienceNav } from './components/ExperienceNav'
 import { playIntroAudioFromUserGesture } from './utils/introAudio'
 
 export default function App() {
@@ -52,13 +53,10 @@ export default function App() {
 
       <a
         href={hasEntered ? '#reveal' : '#opening'}
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[120] focus:rounded-lg focus:bg-cream focus:px-4 focus:py-2 focus:text-midnight light:focus:bg-navy light:focus:text-cream"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[120] focus:rounded-lg focus:bg-cream focus:px-4 focus:py-2 focus:text-midnight"
       >
         Skip to story
       </a>
-
-      <ThemeToggle />
-      <ThemeNudge visible={hasEntered} />
 
       <FloatingBackground dense={!hasEntered} />
 
@@ -77,19 +75,21 @@ export default function App() {
         ) : (
           <motion.div
             key="experience"
-            initial={{ opacity: 1, scale: 1 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10"
           >
-            <main
-              id="main-story"
-              className="relative bg-section-shine light:bg-section-shine-light"
-            >
+            <ExperienceNav />
+            <main id="main-story" className="relative bg-section-shine">
               <BirthdayReveal />
               <SectionDivider />
+              <BrotherhoodSection />
+              <SectionDivider />
               <SpecialQualities />
+              <SectionDivider />
+              <DevTribute />
               <SectionDivider />
               <FunnyMoments />
               <SectionDivider />
@@ -108,7 +108,7 @@ export default function App() {
 
       {flash ? (
         <motion.div
-          className="pointer-events-none fixed inset-0 z-[110] bg-gradient-to-b from-gold/35 via-gold-soft/10 to-transparent light:from-gold/25 light:via-gold-soft/15"
+          className="pointer-events-none fixed inset-0 z-[110] bg-gradient-to-b from-gold/35 via-gold-soft/10 to-transparent"
           initial={{ opacity: 0.9 }}
           animate={{ opacity: 0 }}
           transition={{ duration: 0.75, ease: 'easeOut' }}

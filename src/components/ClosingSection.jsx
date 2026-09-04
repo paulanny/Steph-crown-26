@@ -5,7 +5,7 @@ import { fireCelebrationBurst } from '../utils/confettiBurst'
 
 export function ClosingSection({ onReplay, onSmile }) {
   return (
-    <SectionWrapper id="closing" eyebrow="Finale" spacing="wide" className="pb-32">
+    <SectionWrapper id="closing" eyebrow="Finale" spacing="wide" className="pb-40 md:pb-32">
       <div className="relative mx-auto max-w-3xl text-center">
         <div className="absolute -inset-x-10 -top-10 h-40 bg-gradient-to-b from-gold/10 to-transparent blur-3xl light:from-gold/18" aria-hidden />
 

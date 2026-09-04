@@ -10,7 +10,7 @@ export function EasterEgg() {
       <motion.button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 left-6 z-40 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-lg text-gold/50 backdrop-blur-sm transition hover:border-gold/30 hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-soft light:border-navy/20 light:bg-white light:text-amber-900 light:shadow-md"
+        className="fixed bottom-20 left-6 z-40 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-lg text-gold/50 backdrop-blur-sm transition hover:border-gold/30 hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-soft md:bottom-6 light:border-navy/20 light:bg-white light:text-amber-900 light:shadow-md"
         aria-label="Small surprise"
         title=""
         initial={{ opacity: 0.35 }}

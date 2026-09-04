@@ -2,38 +2,37 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { siteMeta } from '../content/birthdayContent'
 
 export function LoadingIntro({ visible }) {
+  const lines = siteMeta.loadingLines ?? [siteMeta.loadingLine]
+
   return (
     <AnimatePresence>
       {visible ? (
         <motion.div
           key="loading"
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-midnight light:bg-[#f0ebe3]"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-midnight"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         >
-          <motion.div
-            className="h-px w-32 bg-gradient-to-r from-transparent via-gold to-transparent"
-            initial={{ scaleX: 0.2, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          />
-          <motion.p
-            className="mt-8 max-w-sm text-center font-display text-xl italic text-cream/85 light:text-ink md:text-2xl"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.6 }}
-          >
-            {siteMeta.loadingLine}
-          </motion.p>
-          <motion.p
-            className="mt-3 text-sm text-white/40 light:text-inkSoft"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.45, duration: 0.5 }}
-          >
-            From {siteMeta.fromName}
-          </motion.p>
+          <div className="w-full max-w-md px-6 font-mono text-sm text-cream/70">
+            <p className="mb-6 text-gold-soft/90">
+              {siteMeta.fromName.toLowerCase()}@surprise:~$ {siteMeta.loadingLine}
+            </p>
+            <ul className="space-y-2">
+              {lines.map((line, i) => (
+                <motion.li
+                  key={line}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.18 + i * 0.28, duration: 0.4 }}
+                  className="flex gap-3"
+                >
+                  <span className="text-emerald-400/90">ok</span>
+                  <span>{line}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
         </motion.div>
       ) : null}
     </AnimatePresence>

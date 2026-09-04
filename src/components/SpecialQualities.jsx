@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { FaBookOpen, FaHeart, FaHandsPraying, FaPeopleGroup } from 'react-icons/fa6'
 import { BsShieldCheck } from 'react-icons/bs'
-import { HiSparkles } from 'react-icons/hi2'
+import { HiSparkles, HiCodeBracket } from 'react-icons/hi2'
 import { qualitiesContent } from '../content/birthdayContent'
 import { SectionWrapper } from './SectionWrapper'
 
@@ -12,6 +12,7 @@ const ICON_MAP = {
   impact: HiSparkles,
   mentor: FaPeopleGroup,
   spiritual: FaHandsPraying,
+  craft: HiCodeBracket,
 }
 
 const cardVariants = {

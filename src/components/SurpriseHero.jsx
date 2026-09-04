@@ -1,115 +1,187 @@
-import { motion } from 'framer-motion'
-import { heroContent } from '../content/birthdayContent'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { gateContent } from '../content/birthdayContent'
 import { fireCelebrationBurst } from '../utils/confettiBurst'
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.08 },
-  },
-}
-
-const item = {
-  hidden: { opacity: 0, y: 28 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
-  },
-}
-
-const headlineBlock = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.055, delayChildren: 0.02 },
-  },
-}
-
-const word = {
-  hidden: { opacity: 0, y: 20, filter: 'blur(6px)' },
-  show: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.52, ease: [0.22, 1, 0.36, 1] },
-  },
-}
+import { useTypewriter } from '../hooks/useTypewriter'
 
 export function SurpriseHero({ onEnter }) {
-  const handleEnter = () => {
+  const [promptIndex, setPromptIndex] = useState(0)
+  const [noHits, setNoHits] = useState(0)
+  const [comment, setComment] = useState('')
+  const [noPos, setNoPos] = useState({ x: 0, y: 0 })
+  const [opening, setOpening] = useState(false)
+  const noLock = useRef(false)
+
+  const prompt = gateContent.prompts[promptIndex]
+  const { text: typed, done } = useTypewriter(prompt, 22)
+
+  useEffect(() => {
+    if (!done || opening) return undefined
+    const id = window.setTimeout(() => {
+      setPromptIndex((i) => (i + 1) % gateContent.prompts.length)
+    }, 2800)
+    return () => window.clearTimeout(id)
+  }, [done, opening, prompt])
+
+  const enter = useCallback(() => {
+    if (opening) return
+    setOpening(true)
+    setComment(gateContent.statusOpening)
     fireCelebrationBurst('center')
-    onEnter()
-  }
+    window.setTimeout(() => onEnter(), 520)
+  }, [onEnter, opening])
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Enter') return
+      const tag = e.target?.tagName
+      if (tag === 'BUTTON' || tag === 'A' || tag === 'INPUT' || tag === 'TEXTAREA') return
+      e.preventDefault()
+      enter()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [enter])
+
+  const bumpNo = useCallback(() => {
+    if (opening || noLock.current) return
+    noLock.current = true
+    window.setTimeout(() => {
+      noLock.current = false
+    }, 620)
+
+    setNoHits((prev) => {
+      const next = prev + 1
+      const comments = gateContent.noComments
+      const idx = Math.min(next - 1, comments.length - 1)
+      setComment(comments[idx])
+      setNoPos({
+        x: (Math.random() - 0.5) * 240,
+        y: (Math.random() - 0.5) * 150,
+      })
+      if (next >= gateContent.noEscapeThreshold) {
+        window.setTimeout(() => enter(), 1100)
+      }
+      return next
+    })
+  }, [enter, opening])
+
+  const status =
+    opening
+      ? gateContent.statusOpening
+      : noHits > 0
+        ? gateContent.statusTease
+        : gateContent.statusIdle
 
   return (
-    <div id="opening" className="relative flex min-h-[100dvh] flex-col items-center justify-center px-6 py-16 text-center">
+    <div
+      id="opening"
+      className="relative flex min-h-[100dvh] flex-col items-center justify-center px-6 py-16"
+    >
+      <div className="pointer-events-none absolute inset-0 bg-hero-glow opacity-90" aria-hidden />
       <div
-        className="pointer-events-none absolute inset-0 bg-hero-glow opacity-90 light:bg-hero-glow-light light:opacity-100"
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
         aria-hidden
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(232,213,163,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(232,213,163,0.35) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 45%, black, transparent)',
+        }}
       />
 
       <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="relative z-10 max-w-3xl"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 w-full max-w-2xl"
       >
-        <motion.p
-          variants={headlineBlock}
-          className="font-display text-4xl font-medium leading-tight tracking-tight text-cream light:text-ink md:text-6xl md:leading-[1.08]"
-        >
-          {heroContent.headline.split(' ').map((w, i) => (
-            <motion.span key={`${w}-${i}`} variants={word} className="mr-[0.2em] inline-block last:mr-0">
-              {w}
-            </motion.span>
-          ))}
-        </motion.p>
-        <motion.p
-          variants={item}
-          className="mt-6 text-lg text-gold-soft/95 light:text-inkMuted md:text-xl"
-        >
-          {heroContent.subline}
-        </motion.p>
+        <div className="mb-8 flex items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold-soft/80">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
+          {gateContent.promptKicker}
+        </div>
 
-        <motion.div
-          variants={item}
-          className="mt-12 flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center"
-        >
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.02, boxShadow: '0 0 40px rgba(201, 162, 39, 0.2)' }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => handleEnter()}
-            className="rounded-full bg-gradient-to-r from-gold to-gold-soft px-10 py-4 text-base font-semibold text-midnight shadow-glow transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-soft focus-visible:ring-offset-2 focus-visible:ring-offset-midnight light:focus-visible:ring-offset-[#f3efe6]"
-            aria-describedby="hero-hint"
-          >
-            {heroContent.ctaPrimary}
-          </motion.button>
+        <div className="overflow-hidden rounded-2xl border border-white/12 bg-black/35 shadow-card backdrop-blur-xl">
+          <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+            <span className="h-2.5 w-2.5 rounded-full bg-rose-400/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-300/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
+            <p className="ml-3 font-mono text-xs text-cream/45">
+              {gateContent.terminalUser}@{gateContent.terminalHost}:~$ ./open-birthday
+            </p>
+          </div>
 
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            animate={{
-              rotate: [0, -1.2, 1.2, -1, 1, 0],
-              y: [0, -2, 0, -1, 0],
-            }}
-            transition={{
-              duration: 2.8,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-            onClick={() => handleEnter()}
-            className="rounded-full border border-white/20 bg-white/[0.06] px-8 py-4 text-base font-medium text-cream backdrop-blur-md transition-colors hover:border-gold/35 hover:bg-white/[0.1] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-soft/80 focus-visible:ring-offset-2 focus-visible:ring-offset-midnight light:border-navy/20 light:bg-white light:text-ink light:shadow-md light:hover:border-gold/45 light:hover:bg-white light:focus-visible:ring-offset-[#f3efe6]"
-            aria-describedby="hero-hint"
-          >
-            {heroContent.ctaPlayful}
-          </motion.button>
-        </motion.div>
-        <p id="hero-hint" className="sr-only">
-          {heroContent.ctaHint}
-        </p>
+          <div className="px-6 py-10 text-center md:px-10 md:py-12">
+            <p className="min-h-[4.5rem] font-display text-3xl font-medium leading-snug tracking-tight text-cream md:min-h-[5.5rem] md:text-5xl md:leading-[1.12]">
+              {typed}
+              <span className="ml-0.5 inline-block h-[0.9em] w-[2px] translate-y-[0.08em] animate-pulse bg-gold" />
+            </p>
+            <p className="mt-5 font-mono text-xs text-cream/40">{status}</p>
+
+            <div className="mt-4 flex justify-center gap-1.5" aria-hidden>
+              {gateContent.prompts.map((p, i) => (
+                <span
+                  key={p}
+                  className={`h-1 rounded-full transition-all ${
+                    i === promptIndex ? 'w-6 bg-gold' : 'w-1.5 bg-white/20'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <div className="relative mt-10 flex min-h-[6.5rem] items-center justify-center">
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.03, boxShadow: '0 0 40px rgba(201, 162, 39, 0.28)' }}
+                whileTap={{ scale: 0.98 }}
+                onClick={enter}
+                disabled={opening}
+                className="relative z-10 mr-4 rounded-full bg-gradient-to-r from-gold to-gold-soft px-10 py-4 text-base font-semibold text-midnight shadow-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-soft focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
+              >
+                {gateContent.yesLabel}
+              </motion.button>
+
+              <motion.button
+                type="button"
+                aria-disabled="true"
+                animate={{ x: noPos.x, y: noPos.y }}
+                transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+                onMouseEnter={bumpNo}
+                onFocus={bumpNo}
+                onPointerDown={(e) => {
+                  e.preventDefault()
+                  bumpNo()
+                }}
+                onClick={(e) => {
+                  e.preventDefault()
+                }}
+                className="relative z-[1] cursor-not-allowed rounded-full border border-white/15 bg-white/[0.04] px-8 py-4 text-base font-medium text-cream/55 backdrop-blur-md"
+              >
+                {gateContent.noLabel}
+              </motion.button>
+            </div>
+
+            <p id="hero-hint" className="sr-only">
+              {gateContent.yesHint}
+            </p>
+
+            <AnimatePresence mode="wait">
+              {comment ? (
+                <motion.p
+                  key={comment}
+                  role="status"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="mx-auto mt-8 max-w-md font-mono text-sm leading-relaxed text-gold-soft/90"
+                >
+                  {'> '}
+                  {comment}
+                </motion.p>
+              ) : null}
+            </AnimatePresence>
+          </div>
+        </div>
       </motion.div>
     </div>
   )

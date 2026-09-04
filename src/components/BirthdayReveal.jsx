@@ -44,7 +44,7 @@ export function BirthdayReveal() {
                 <p className="mt-3 text-sm leading-relaxed text-cream/60 light:text-inkMuted">
                   {/* REPLACE: place portrait at public/images/mentor-main.jpg */}
                   <span className="text-gold/80 light:text-[#4a3a0f]">mentor-main.jpg</span> in{' '}
-                  <code className="text-cream/50 light:bg-ink/5 light:text-inkSoft">public/images/</code> — then refresh. Portrait ratio
+                  <code className="text-cream/50 light:bg-ink/5 light:text-inkSoft">public/images/</code>, then refresh. Portrait ratio
                   works best.
                 </p>
               </div>
@@ -63,7 +63,24 @@ export function BirthdayReveal() {
         </motion.h1>
 
         <motion.p
-          className="mx-auto mt-6 max-w-2xl font-display text-2xl italic text-cream/90 light:text-ink md:text-3xl"
+          className="mx-auto mt-5 font-mono text-xs tracking-[0.12em] text-gold-soft/80"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          {birthdayReveal.fullName}
+        </motion.p>
+        <motion.p
+          className="mx-auto mt-2 text-sm text-cream/40"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          {birthdayReveal.nameNote}
+        </motion.p>
+
+        <motion.p
+          className="mx-auto mt-6 max-w-2xl font-display text-2xl italic text-cream/90 md:text-3xl"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

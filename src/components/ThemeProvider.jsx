@@ -1,33 +1,23 @@
-import { createContext, useContext, useLayoutEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useLayoutEffect, useMemo } from 'react'
 
 const ThemeContext = createContext(null)
 
-const STORAGE_KEY = 'mentor-birthday-theme'
-
+/** Dark-only birthday experience — light mode is intentionally not offered. */
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return 'dark'
-    return localStorage.getItem(STORAGE_KEY) === 'light' ? 'light' : 'dark'
-  })
-
   useLayoutEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light')
-    try {
-      localStorage.setItem(STORAGE_KEY, theme)
-    } catch {
-      /* private mode */
-    }
-  }, [theme])
+    document.documentElement.classList.remove('light')
+    document.documentElement.style.colorScheme = 'dark'
+  }, [])
 
   const value = useMemo(
     () => ({
-      theme,
-      isLight: theme === 'light',
-      toggleTheme: () => setTheme((t) => (t === 'dark' ? 'light' : 'dark')),
-      setDark: () => setTheme('dark'),
-      setLight: () => setTheme('light'),
+      theme: 'dark',
+      isLight: false,
+      toggleTheme: () => {},
+      setDark: () => {},
+      setLight: () => {},
     }),
-    [theme],
+    [],
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
